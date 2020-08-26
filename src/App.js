@@ -33,7 +33,7 @@ const App = () => {
 
                 <div>
                     <HookCounter value={appValue}/>
-                    <ClassCounter value={appValue}/>
+                    {/*<ClassCounter value={appValue}/>*/}
                     <ItemInfo id={appValue}/>
                 </div>
             </div>
@@ -66,9 +66,11 @@ const HookCounter = (props) => {
     )
 }
 
-const ItemInfo = ({id}) => {
 
-    const [name, setName] = useState(id)
+const setItemInfo = (id) => {
+
+    console.log("id:",id)
+    const [name, setName] = useState("init")
     const [load, uploading] = useState(false)
 
     useEffect(() => {
@@ -79,14 +81,24 @@ const ItemInfo = ({id}) => {
                 load && setName(result.name);
             });
         return () => uploading(false)
-    }, [id,load])
+    }, [id, load])
+
+    console.log("name:", name)
+    return name
+}
+
+
+const ItemInfo = ({id}) => {
+
+    console.log("ItemInfo:", id)
+    const name = setItemInfo(id)
 
     return (
         <div>{name}</div>
     )
 }
 
-class ClassCounter extends React.Component {
+/*class ClassCounter extends React.Component {
 
     componentDidMount() {
         console.debug("componentDidMount() ")
@@ -105,6 +117,6 @@ class ClassCounter extends React.Component {
             <div>class value: {this.props.value}</div>
         );
     }
-}
+}*/
 
 export default App;
