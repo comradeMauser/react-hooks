@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from 'react';
 
 const App = () => {
-    const [appValue, changeValue] = useState(88)
+    const [appValue, changeValue] = useState(23)
     const [visible, hide] = useState(true)
 
-    useEffect(() => {
-        const timer = setTimeout(() => hide((view) => !view), 5000);
-        return () => clearTimeout(timer)
-    }, [])
+    // useEffect(() => {
+    //     const timer = setTimeout(() => hide((view) => !view), 5000);
+    //     return () => clearTimeout(timer)
+    // }, [])
 
     if (visible) {
         return (
@@ -34,6 +34,7 @@ const App = () => {
                 <div>
                     <HookCounter value={appValue}/>
                     <ClassCounter value={appValue}/>
+                    <ItemInfo id={appValue}/>
                 </div>
             </div>
         )
@@ -65,6 +66,25 @@ const HookCounter = (props) => {
     )
 }
 
+const ItemInfo = ({id}) => {
+
+    const [name, setName] = useState(id)
+    const [load, uploading] = useState(false)
+
+    useEffect(() => {
+        uploading(true);
+        fetch(`http://swapi.dev/api/people/${id}/`)
+            .then((person) => person.json())
+            .then((result) => {
+                load && setName(result.name);
+            });
+        return () => uploading(false)
+    }, [id,load])
+
+    return (
+        <div>{name}</div>
+    )
+}
 
 class ClassCounter extends React.Component {
 
