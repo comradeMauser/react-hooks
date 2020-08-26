@@ -67,10 +67,9 @@ const HookCounter = (props) => {
 }
 
 
-const setItemInfo = (id) => {
+const useItemInfo = (id) => {
 
-    console.log("id:",id)
-    const [name, setName] = useState("init")
+    const [name, setName] = useState("loading")
     const [load, uploading] = useState(false)
 
     useEffect(() => {
@@ -83,15 +82,12 @@ const setItemInfo = (id) => {
         return () => uploading(false)
     }, [id, load])
 
-    console.log("name:", name)
     return name
 }
 
 
 const ItemInfo = ({id}) => {
-
-    console.log("ItemInfo:", id)
-    const name = setItemInfo(id)
+    const name = useItemInfo(id)
 
     return (
         <div>{name}</div>
