@@ -1,9 +1,13 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 const App = () => {
-
     const [appValue, changeValue] = useState(88)
     const [visible, hide] = useState(true)
+
+    useEffect(() => {
+        const timer = setTimeout(() => hide((view) => !view), 5000);
+        return () => clearTimeout(timer)
+    }, [])
 
     if (visible) {
         return (
@@ -36,19 +40,31 @@ const App = () => {
     }
     return (
         <button className="btn btn-block btn-outline-warning"
-                style={{padding: "10px", margin: "5px"}}
+                style={{margin: "10px"}}
                 onClick={() => {
-                    hide((sigh) => !sigh)
+                    hide((view) => !view)
                 }}> show</button>
 
     )
 }
 
+
 const HookCounter = (props) => {
+
+    useEffect(() => {
+        console.error("Johnny, they`re in the trees!")
+    }, [])
+    useEffect(
+        () => {
+            console.debug("love smell napalm in the morning");
+            return () => console.log("catharsis")
+        }, []
+    )
     return (
         <div> hook value: {props.value}</div>
     )
 }
+
 
 class ClassCounter extends React.Component {
 
@@ -70,6 +86,5 @@ class ClassCounter extends React.Component {
         );
     }
 }
-
 
 export default App;
