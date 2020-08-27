@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 
 const App = () => {
     const [appValue, changeValue] = useState(23)
@@ -67,52 +67,45 @@ const HookCounter = (props) => {
 }
 
 
-const useItemInfo = (id) => {
+const getItem = (id) => {
+    return fetch(`http://swapi.dev/api/people/${id}/`)
+        .then((person) => person.json())
+        .then(data => data)
 
-    const [name, setName] = useState("loading")
+
+};
+
+const useRequest = (request) => {
+
+    const [dataName, setData] = useState("loading")
     const [load, uploading] = useState(false)
 
     useEffect(() => {
         uploading(true);
-        fetch(`http://swapi.dev/api/people/${id}/`)
-            .then((person) => person.json())
+        request()
             .then((result) => {
-                load && setName(result.name);
+                load && setData(result);
             });
         return () => uploading(false)
-    }, [id, load])
+    }, [request, load])
 
-    return name
+    return dataName
+}
+
+const useItemInfo = (id) => {
+    const request = useCallback(() => getItem(id), [id])
+    return useRequest(request)
+
 }
 
 
 const ItemInfo = ({id}) => {
-    const name = useItemInfo(id)
+    const data = useItemInfo(id)
 
     return (
-        <div>{name}</div>
+        <div>{id}-{data && data.name}</div>
     )
 }
 
-/*class ClassCounter extends React.Component {
-
-    componentDidMount() {
-        console.debug("componentDidMount() ")
-    }
-
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        console.debug("componentDidUpdate")
-    }
-
-    componentWillUnmount() {
-        console.debug("componentWillUnmount")
-    }
-
-    render() {
-        return (
-            <div>class value: {this.props.value}</div>
-        );
-    }
-}*/
 
 export default App;
