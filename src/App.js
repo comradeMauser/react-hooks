@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 
 const App = () => {
     const [appValue, changeValue] = useState(23)
@@ -20,22 +20,27 @@ const App = () => {
                         }}> hide
                 </button>
 
-                <button className="btn btn-info"
+
+                <button className="btn btn-success btn-block btn-sm"
                         onClick={() => {
                             changeValue((inc) => inc + 1)
                         }}>INC
                 </button>
-
-                <button className="btn btn-success"
+                <div className="row">
+                    <span className="col text-right"><HookCounter value={appValue}/></span>
+                    <span className="col text-left"><ItemInfo id={appValue}/></span>
+                </div>
+                <button className="btn btn-info btn-block btn-sm"
                         onClick={() => {
                             changeValue((dec) => dec - 1)
                         }}>DEC
                 </button>
 
+
                 <div>
-                    <HookCounter value={appValue}/>
+
                     {/*<ClassCounter value={appValue}/>*/}
-                    <ItemInfo id={appValue}/>
+
                 </div>
             </div>
         )
@@ -66,10 +71,9 @@ const HookCounter = (props) => {
         }, []
     )
     return (
-        <div> hook value: {props.value}</div>
+        <div className="container"> hook value: {props.value}</div>
     )
 }
-// loading && setData({data: result, loading: false, error: false});
 
 const getItem = (id) => {
     return fetch(`http://swapi.dev/api/people/${id}/`)
@@ -78,11 +82,11 @@ const getItem = (id) => {
 };
 
 const useRequest = (request) => {
-    const initData = {
+    const initData = useMemo(() => ({
         data: null,
-        loading: false,
-        error: "err"
-    }
+        loading: true,
+        error: false
+    }), [])
 
     const [data, setData] = useState(initData)
 
@@ -91,11 +95,11 @@ const useRequest = (request) => {
         let loading = true;
 
         request()
-            .then((result) => loading && setData({data: result, loading: false, error: null}))
-            .catch(error => loading && setData({data: null, loading: false, error: error}))
+            .then((result) => loading && setData({data: result, loading: false, error: false}))
+            .catch(error => loading && setData({data: null, loading: false, error}))
 
         return () => loading = false;
-    }, [request])
+    }, [request, initData])
     return data
 }
 
@@ -120,7 +124,7 @@ const ItemInfo = ({id}) => {
     }
 
     return (
-        <div>{data.name}</div>
+        <div className="container">{data.name}</div>
     )
 }
 
