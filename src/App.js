@@ -4,10 +4,10 @@ const App = () => {
     const [appValue, changeValue] = useState(23)
     const [visible, hide] = useState(true)
 
-    // useEffect(() => {
-    //     const timer = setTimeout(() => hide((view) => !view), 5000);
-    //     return () => clearTimeout(timer)
-    // }, [])
+    useEffect(() => {
+        const timer = setTimeout(() => hide((view) => !view), 5000);
+        return () => clearTimeout(timer)
+    }, [])
 
     if (visible) {
         return (
@@ -20,31 +20,26 @@ const App = () => {
                         }}> hide
                 </button>
 
-
                 <button className="btn btn-success btn-block btn-sm"
                         onClick={() => {
                             changeValue((inc) => inc + 1)
                         }}>INC
                 </button>
+
                 <div className="row">
                     <span className="col text-right"><HookCounter value={appValue}/></span>
                     <span className="col text-left"><ItemInfo id={appValue}/></span>
                 </div>
+
                 <button className="btn btn-info btn-block btn-sm"
                         onClick={() => {
                             changeValue((dec) => dec - 1)
                         }}>DEC
                 </button>
-
-
-                <div>
-
-                    {/*<ClassCounter value={appValue}/>*/}
-
-                </div>
             </div>
         )
     }
+
     return (
         <div className="container"
              style={{padding: "10px"}}>
@@ -96,7 +91,7 @@ const useRequest = (request) => {
 
         request()
             .then((result) => loading && setData({data: result, loading: false, error: false}))
-            .catch(error => loading && setData({data: null, loading: false, error}))
+            .catch(error => loading && setData({data: null, loading: false, error}));
 
         return () => loading = false;
     }, [request, initData])
@@ -107,7 +102,6 @@ const useItemInfo = (id) => {
     const request = useCallback(() => getItem(id), [id])
     return useRequest(request)
 }
-
 
 const ItemInfo = ({id}) => {
     const {data, loading, error} = useItemInfo(id)
