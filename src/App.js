@@ -11,7 +11,8 @@ const App = () => {
 
     if (visible) {
         return (
-            <div style={{padding: "10px"}}>
+            <div className="container"
+                 style={{padding: "10px"}}>
                 <button className="btn btn-block btn-outline-warning"
                         style={{marginBottom: "5px"}}
                         onClick={() => {
@@ -40,12 +41,15 @@ const App = () => {
         )
     }
     return (
-        <button className="btn btn-block btn-outline-warning"
-                style={{margin: "10px"}}
-                onClick={() => {
-                    hide((view) => !view)
-                }}> show</button>
-
+        <div className="container"
+             style={{padding: "10px"}}>
+            <button className="btn btn-block btn-outline-warning"
+                    style={{marginBottom: "5px"}}
+                    onClick={() => {
+                        hide((view) => !view)
+                    }}> show
+            </button>
+        </div>
     )
 }
 
@@ -65,45 +69,58 @@ const HookCounter = (props) => {
         <div> hook value: {props.value}</div>
     )
 }
-
+// loading && setData({data: result, loading: false, error: false});
 
 const getItem = (id) => {
     return fetch(`http://swapi.dev/api/people/${id}/`)
         .then((person) => person.json())
         .then(data => data)
-
-
 };
 
 const useRequest = (request) => {
+    const initData = {
+        data: null,
+        loading: false,
+        error: "err"
+    }
 
-    const [dataName, setData] = useState("loading")
-    const [load, uploading] = useState(false)
+    const [data, setData] = useState(initData)
 
     useEffect(() => {
-        uploading(true);
-        request()
-            .then((result) => {
-                load && setData(result);
-            });
-        return () => uploading(false)
-    }, [request, load])
+        setData(initData);
+        let loading = true;
 
-    return dataName
+        request()
+            .then((result) => loading && setData({data: result, loading: false, error: null}))
+            .catch(error => loading && setData({data: null, loading: false, error: error}))
+
+        return () => loading = false;
+    }, [request])
+    return data
 }
 
 const useItemInfo = (id) => {
     const request = useCallback(() => getItem(id), [id])
     return useRequest(request)
-
 }
 
 
 const ItemInfo = ({id}) => {
-    const data = useItemInfo(id)
+    const {data, loading, error} = useItemInfo(id)
+
+    if (loading) {
+        return (
+            <div>...loading...</div>
+        )
+    }
+    if (error) {
+        return (
+            <div>it`s does not work</div>
+        )
+    }
 
     return (
-        <div>{id}-{data && data.name}</div>
+        <div>{data.name}</div>
     )
 }
 
